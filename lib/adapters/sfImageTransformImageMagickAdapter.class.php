@@ -169,7 +169,21 @@ class sfImageTransformImageMagickAdapter extends sfImageTransformAdapterAbstract
   {
     $copyObj = clone $this;
 
-    $copyObj->setHolder($this->getHolder()->clone());
+    /*
+     * The clone() method is deprecated since imagick 3.1
+     * Still use the clone() method for older versions to be compatible 
+     */
+    $ext = new ReflectionExtension('imagick');
+    $imagickVersion = $ext->getVersion();
+    
+    if (version_compare($imagickVersion, '3.1.0dev', '<'))
+    {
+      $copyObj->setHolder($this->getHolder()->clone());
+    }
+    else
+    {
+      $copyObj->setHolder(clone $this->getHolder());
+    }
 
     return $copyObj;
   }
